@@ -1,11 +1,13 @@
 import requests
+from datetime import datetime
 from send_email import send_email
 
 topic = "tesla"
+date = datetime.today().strftime('%Y-%m-%d')
 api_key = "cd9657a739a043b0a6ba851b0d3431e0"
 url = "https://newsapi.org/v2/everything?" \
       f"q={topic}" \
-      "&from=2023-02-20&sortBy=publishedAt" \
+      f"&from={date}&sortBy=publishedAt" \
       "&apiKey=cd9657a739a043b0a6ba851b0d3431e0" \
       "&language=en"
 
@@ -13,6 +15,9 @@ url = "https://newsapi.org/v2/everything?" \
 def main():
     request = requests.get(url)
     content = request.json()
+    if content["status"] == "error":
+        print(content["message"])
+        return
     body = ""
     for article in content["articles"][:20]:
         if article["title"] is not None:
